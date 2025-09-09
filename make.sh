@@ -26,17 +26,11 @@ clang demo/plaintext-editor/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
-  -framework Cocoa \
-  -framework IOKit \
-  -framework CoreVideo \
-  -framework CoreFoundation \
-  -framework Metal \
-  -framework ApplicationServices \
   -o build/demo/sdl2_plaintext-editor
 
 mkdir -p build/app
 
-echo "Building handmadehero."
+echo "Building app/handmadehero."
 
 clang app/handmadehero/sdl2_main.c \
   -Ithirdparty/SDL2/include \
