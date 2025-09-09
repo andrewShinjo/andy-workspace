@@ -20,13 +20,13 @@ fi
 
 mkdir -p build/demo
 
-echo "Building demo/sdl2_plaintext-editor"
+echo "Building demo/sdl2_plaintext_editor"
 
-clang demo/plaintext-editor/sdl2_main.c \
+clang demo/plaintext_editor/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
-  -o build/demo/sdl2_plaintext-editor
+  -o build/demo/sdl2_plaintext_editor
 
 mkdir -p build/app
 
