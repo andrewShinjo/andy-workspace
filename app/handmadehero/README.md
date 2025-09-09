@@ -1,1 +1,1 @@
-- [ ] Day 1: Setting up the Windows build.
+- [x] Day 1: Setting up the Windows build.
