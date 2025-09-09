@@ -3,6 +3,7 @@
 # Exit immediately if any command fails.
 set -e
 
+rm -rf build/*
 mkdir -p build
 
 echo "Building SDL2 library."
@@ -16,10 +17,22 @@ if [ ! -d thirdparty/SDL2/build ]; then
   )
 fi
 
+mkdir -p build/demo
+
+echo "Building demo/sdl2_plaintext-editor"
+
+clang demo/plaintext-editor/sdl2_main.c \
+  -Ithirdparty/SDL2/include \
+  -Lthirdparty/SDL2/build \
+  -lSDL2 \
+  -o build/demo/sdl2_plaintext-editor
+
+mkdir -p build/app
+
 echo "Building handmadehero."
 
 clang app/handmadehero/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
-  -o build/sdl2_handmadehero
+  -o build/app/sdl2_handmadehero
