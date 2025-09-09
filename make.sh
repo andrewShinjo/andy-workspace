@@ -12,8 +12,9 @@ if [ ! -d thirdparty/SDL2/build ]; then
   mkdir -p thirdparty/SDL2/build
   (
     cd thirdparty/SDL2/build
-    cmake .. -DCMAKE_BUILD_TYPE=Release
-    cmake --build . --config Release
+    # Build SDL2 as a shared library
+    cmake -DSDL_SHARED=ON -DSDL_STATIC=OFF ..
+    make
   )
 fi
 
@@ -25,6 +26,12 @@ clang demo/plaintext-editor/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
+  -framework Cocoa \
+  -framework IOKit \
+  -framework CoreVideo \
+  -framework CoreFoundation \
+  -framework Metal \
+  -framework ApplicationServices \
   -o build/demo/sdl2_plaintext-editor
 
 mkdir -p build/app
