@@ -1,14 +1,10 @@
+#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <stdio.h>
-#include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
-#include "app.h"
-
-#include "../../lib/data_structures/gap_buffer/gap_buffer_t.c"
-#include "app.c"
 
 int main()
 {
-  printf("plaintext_editor SDL2\n");
+  printf("plaintext-editor SDL2\n");
 
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
   {
@@ -17,7 +13,7 @@ int main()
   }
 
   SDL_Window *window = SDL_CreateWindow(
-    "plaintext_editor SDL2",
+    "plaintext-editor SDL2",
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
     800,
@@ -29,14 +25,6 @@ int main()
     SDL_Log("Failed to create a window: %s", SDL_GetError());
     return 1;
   }
-
-  SDL_RaiseWindow(window);
-
-  // Application state
-
-  app_t app = {};
-  gap_buffer_t gap_buffer = {};
-  gap_buffer_init(&gap_buffer, 64);
 
   SDL_Event event;
   int running = 1;
@@ -50,9 +38,6 @@ int main()
         running = 0;
       }
     }
-
-    // update();
-    app_render(&app);
   }
 
   SDL_DestroyWindow(window);
