@@ -3,7 +3,9 @@
 # Exit immediately if any command fails.
 set -e
 
-rm -rf build/*
+rm -rf build
+rm -rf thirdparty/SDL2/build
+rm -rf thirdparty/SDL2_ttf/build
 mkdir -p build
 
 echo "Building SDL2 library."
@@ -12,9 +14,22 @@ if [ ! -d thirdparty/SDL2/build ]; then
   mkdir -p thirdparty/SDL2/build
   (
     cd thirdparty/SDL2/build
-    # Build SDL2 as a shared library
     cmake -DSDL_SHARED=ON -DSDL_STATIC=OFF ..
     make
+  )
+fi
+
+echo "Building SDL2_ttf library."
+
+if [ ! -d thirdparty/SDL2_ttf/build ]; then
+  mkdir -p thirdparty/SDL2_ttf/build
+  (
+    cd thirdparty/SDL2_ttf/build
+    cmake .. -DCMAKE_C_COMPILER=clang \
+         -DCMAKE_BUILD_TYPE=Release \
+         -DSDLTTF_VENDORED=ON \
+         -DBUILD_SHARED_LIBS=OFF
+    cmake --build . --config Release
   )
 fi
 
@@ -26,6 +41,9 @@ clang demo/plaintext_editor/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
+  -Ithirdparty/SDL2_ttf/include \
+  -Lthirdparty/SDL2_ttf/build \
+  -lSDL2_ttf \
   -o build/demo/sdl2_plaintext_editor
 
 mkdir -p build/app
