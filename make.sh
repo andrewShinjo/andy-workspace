@@ -4,8 +4,8 @@
 set -e
 
 rm -rf build
-rm -rf thirdparty/SDL2/build
-rm -rf thirdparty/SDL2_ttf/build
+# rm -rf thirdparty/SDL2/build
+# rm -rf thirdparty/SDL2_ttf/build
 mkdir -p build
 
 echo "Building SDL2 library."
@@ -38,11 +38,7 @@ mkdir -p build/demo
 echo "Building demo/sdl2_plaintext_editor"
 
 clang demo/plaintext_editor/sdl2_main.c \
-  -Ithirdparty/SDL2/include \
-  -Lthirdparty/SDL2/build \
-  -lSDL2 \
-  -Ithirdparty/SDL2_ttf/include \
-  -Lthirdparty/SDL2_ttf/build \
+  `sdl2-config --cflags --libs` \
   -lSDL2_ttf \
   -o build/demo/sdl2_plaintext_editor
 

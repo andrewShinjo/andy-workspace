@@ -26,6 +26,8 @@ void app_render(app_t *app)
   for(int i = 0; i < slices.left_length; i++)
   {
     char c = *(slices.left_start + i);
+    // get character height
+    // get character width
   }
 
   // cleanup
