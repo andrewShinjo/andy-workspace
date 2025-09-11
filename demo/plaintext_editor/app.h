@@ -5,8 +5,7 @@
 
 typedef struct 
 {
-  gap_buffer_t gap_buffer;
-  size_t cursor_index;
+  gap_buffer_t *gap_buffer;
 } app_t;
 
 void app_render(app_t *app);

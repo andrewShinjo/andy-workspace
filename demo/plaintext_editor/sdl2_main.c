@@ -37,6 +37,9 @@ int main()
   app_t app = {};
   gap_buffer_t gap_buffer = {};
   gap_buffer_init(&gap_buffer, 64);
+  gap_buffer_insert_text(&gap_buffer, "A", 1);
+
+  app.gap_buffer = &gap_buffer;
 
   SDL_Event event;
   int running = 1;
