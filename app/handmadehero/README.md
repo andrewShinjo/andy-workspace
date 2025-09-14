@@ -1,3 +1,4 @@
 - [x] Day 1: Setting up the Windows build.
 - [x] Day 2: Opening a Win32 window.
 - [x] Day 3: Allocating a back buffer.
+- [x] Day 4: Animating the back buffer.
