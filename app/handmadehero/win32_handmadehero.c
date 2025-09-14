@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <windows.h>
 
 #define global_variable static
@@ -7,53 +8,75 @@
 global_variable int running = 1;
 global_variable BITMAPINFO bitmap_info;
 global_variable void *bitmap_memory;
-global_variable HBITMAP bitmap_handle;
-global_variable HDC bitmap_device_context;
+global_variable int bitmap_width;
+global_variable int bitmap_height;
+global_variable int bytes_per_pixel = 4;
+
+private_function render_weird_gradient(int x_offset, int y_offset)
+{
+	int pitch = bitmap_width * bytes_per_pixel;
+	uint8_t *row = (uint8_t *)bitmap_memory;
+
+	for(int y = 0; y < bitmap_height; y++)
+	{
+		uint32_t *pixel = (uint32_t*)row;
+
+		for(int x = 0; x < bitmap_width; x++)
+		{
+			uint8_t blue = (x + x_offset);
+			uint8_t green = (y + y_offset);
+			*pixel = ((green << 8) | blue);
+			pixel++;
+		}
+
+		row += pitch;
+	}
+}
 
 private_function win32_resize_device_independent_bitmap_section(
 	int width, 
 	int height)
 {
-	if(bitmap_handle)
+
+	if(bitmap_memory)
 	{
-		DeleteObject(bitmap_handle);
-	}
-	else
-	{
-		bitmap_device_context = CreateCompatibleDC(0);
+		VirtualFree(bitmap_memory, 0, MEM_RELEASE);
 	}
 
+	bitmap_width = width;
+	bitmap_height = height;
+
 	bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
-	bitmap_info.bmiHeader.biWidth = width;
-	bitmap_info.bmiHeader.biHeight = height;
+	bitmap_info.bmiHeader.biWidth = bitmap_width;
+	bitmap_info.bmiHeader.biHeight = bitmap_height;
 	bitmap_info.bmiHeader.biPlanes = 1;
 	bitmap_info.bmiHeader.biBitCount = 32;
 	bitmap_info.bmiHeader.biCompression = BI_RGB;
 
-	bitmap_handle = CreateDIBSection(
-		bitmap_device_context,
-		&bitmap_info,
-		DIB_RGB_COLORS,
-		&bitmap_memory,
-		0,
-		0
-	);
-
-	ReleaseDC(0, bitmap_device_context);
+	int bitmap_memory_size = bytes_per_pixel * width * height;
+	bitmap_memory = VirtualAlloc(
+		0, 
+		bitmap_memory_size,
+		MEM_COMMIT, 
+		PAGE_READWRITE);
 }
 
 
 private_function win32_update_window(
 	HDC device_context, 
+	RECT client_rect,
 	int x, 
 	int y, 
 	int width, 
 	int height)
 {
+	int window_width = client_rect.right - client_rect.left;
+	int window_height = client_rect.bottom - client_rect.top;
+
 	StretchDIBits(
 		device_context,
-		x, y, width, height,
-		x, y, width, height,
+		0, 0, bitmap_width, bitmap_height,
+		0, 0, window_width, window_height,
 		bitmap_memory,
 		&bitmap_info,
 		DIB_RGB_COLORS,
@@ -94,7 +117,18 @@ LRESULT CALLBACK win32_main_window_callback(
 			int y = rect.top;
 			int width = rect.right - rect.left;
 			int height = rect.bottom - rect.top;
-			win32_update_window(device_context, x, y, width, height);
+
+			RECT client_rect;
+			GetClientRect(window, &client_rect);
+
+			win32_update_window(
+				device_context, 
+				client_rect, 
+				x, 
+				y, 
+				width, 
+				height);
+
 			EndPaint(window, &paint);
 			break;
 		}
@@ -148,22 +182,40 @@ int WINAPI wWinMain(
 	);
 
 	running = 1;
-
-	MSG message;
+	int x_offset = 0, y_offset = 0;
 
 	while(running)
 	{
-		BOOL message_result = GetMessage(&message, 0, 0, 0);
+		MSG message;
 
-		if(message_result > 0)
+		if(PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 		{
+			if(message.message == WM_QUIT)
+			{
+				running = 0;
+			}
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
-		else
-		{
-			break;
-		}
+
+		render_weird_gradient(x_offset, y_offset);
+
+		HDC device_context = GetDC(window_handle);
+		RECT client_rect;
+		GetClientRect(window_handle, &client_rect);
+		int width = client_rect.right - client_rect.left;
+		int height = client_rect.bottom - client_rect.top;
+		win32_update_window(
+			device_context, 
+			client_rect,
+			0, 
+			0, 
+			width, 
+			height);
+
+		ReleaseDC(window_handle, device_context);
+		x_offset++;
+		y_offset++;
 	}
 	
 	return 0;
