@@ -1,6 +1,71 @@
 #include <windows.h>
 
-LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+#define global_variable static
+#define local_variable static
+#define private_function static
+
+global_variable int running = 1;
+global_variable BITMAPINFO bitmap_info;
+global_variable void *bitmap_memory;
+global_variable HBITMAP bitmap_handle;
+global_variable HDC bitmap_device_context;
+
+private_function win32_resize_device_independent_bitmap_section(
+	int width, 
+	int height)
+{
+	if(bitmap_handle)
+	{
+		DeleteObject(bitmap_handle);
+	}
+	else
+	{
+		bitmap_device_context = CreateCompatibleDC(0);
+	}
+
+	bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
+	bitmap_info.bmiHeader.biWidth = width;
+	bitmap_info.bmiHeader.biHeight = height;
+	bitmap_info.bmiHeader.biPlanes = 1;
+	bitmap_info.bmiHeader.biBitCount = 32;
+	bitmap_info.bmiHeader.biCompression = BI_RGB;
+
+	bitmap_handle = CreateDIBSection(
+		bitmap_device_context,
+		&bitmap_info,
+		DIB_RGB_COLORS,
+		&bitmap_memory,
+		0,
+		0
+	);
+
+	ReleaseDC(0, bitmap_device_context);
+}
+
+
+private_function win32_update_window(
+	HDC device_context, 
+	int x, 
+	int y, 
+	int width, 
+	int height)
+{
+	StretchDIBits(
+		device_context,
+		x, y, width, height,
+		x, y, width, height,
+		bitmap_memory,
+		&bitmap_info,
+		DIB_RGB_COLORS,
+		SRCCOPY
+	);
+}
+
+LRESULT CALLBACK win32_main_window_callback(
+	HWND window, 
+	UINT message, 
+	WPARAM wparam, 
+	LPARAM lparam)
 {
 	LRESULT result = 0;
 
@@ -8,43 +73,42 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 	{
 		case(WM_SIZE):
 		{
-			OutputDebugStringA("WM_SIZE\n");
+			RECT client_rect;
+			GetClientRect(window, &client_rect);
+			int width = client_rect.right - client_rect.left;
+			int height = client_rect.bottom - client_rect.top;
+			win32_resize_device_independent_bitmap_section(width, height);
 			break;
 		}
 		case(WM_DESTROY):
 		{
-			OutputDebugStringA("WM_DESTROY\n");
+			running = 0;
 			break;
 		}
 		case(WM_PAINT):
 		{
 			PAINTSTRUCT paint;
-			// Prepares the window for painting.
 			HDC device_context = BeginPaint(window, &paint);
 			RECT rect = paint.rcPaint;
 			int x = rect.left;
 			int y = rect.top;
 			int width = rect.right - rect.left;
 			int height = rect.bottom - rect.top;
-			// Paints the window white.
-			PatBlt(device_context, x, y, width, height, WHITENESS);
-			// Marks the end of painting the window.
+			win32_update_window(device_context, x, y, width, height);
 			EndPaint(window, &paint);
 			break;
 		}
 		case(WM_CLOSE):
 		{
-			OutputDebugStringA("WM_CLOSE\n");
+			running = 0;
 			break;
 		}
 		case(WM_ACTIVATEAPP):
 		{
-			OutputDebugStringA("WM_ACTIVATEAPP\n");
 			break;
 		}
 		default:
 		{
-			// Let Windows provide a default procedure to process the message.
 			result = DefWindowProc(window, message, wparam, lparam);
 			break;
 		}
@@ -53,65 +117,54 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 	return result;
 }
 
-// Entry point of the Windows program.
 int WINAPI wWinMain(
-	HINSTANCE hInstance,     // Handle to an instance. Used to identify an executable when it's loaded into memory.
-	HINSTANCE hPrevInstance, // Legacy value with no meaning.
-	PWSTR pCmdLine, 		 // Command line arguments as a unicode string.
-	int nCmdShow)            // A flag that represents whether the app is minimized, maximized, or shown normally.
+	HINSTANCE hInstance,
+	HINSTANCE hPrevInstance,
+	PWSTR pCmdLine,
+	int nCmdShow)
 {	
-	// Define WNDCLASS struct.
 	WNDCLASS window_class = {
-		.style = 
-			CS_OWNDC | 	                           // Allocates a unique device context for each window in the class
-			CS_HREDRAW |                           // Redraw the entire window if the width changes
-			CS_VREDRAW,                            // Redraws the entire window if the height changes
-		.lpfnWndProc = main_window_callback,       // A pointer to the window procedure
-		.hInstance = hInstance,                    // A handle to the window instance that contains the window procedure for the class
-		.lpszClassName = "HandMadeHeroWindowClass" // The user-defined window class name
+		.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
+		.lpfnWndProc = win32_main_window_callback,
+		.hInstance = hInstance,                   
+		.lpszClassName = "HandMadeHeroWindowClass" 
 	};
 
-	// Registers the window class so that it can be used to create a window.
 	RegisterClass(&window_class);
 
-	// Creates a window.
 	HWND window_handle = CreateWindowEx(
-		0,                                // Extended window style (none for now)
-		window_class.lpszClassName,       // The user-defined window class name
-		"Handmade Hero",                  // The window name
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // Window style values
-		CW_USEDEFAULT,                    // use default x position
-		CW_USEDEFAULT,                    // use default y position
-		CW_USEDEFAULT,                    // use default width
-		CW_USEDEFAULT,                    // use default height
-		0,                                // a handle to the parent window (don't have one)
-		0,                                // a handle to the menu (don't have one)
-		hInstance,                        // a handle to the instance
-		0                                 // memory to pass additional data (none for now)
+		0,
+		window_class.lpszClassName,
+		"Handmade Hero",
+		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		0,
+		0,
+		hInstance,
+		0
 	);
+
+	running = 1;
 
 	MSG message;
 
-	// Loop forever
-	for(;;)
+	while(running)
 	{
-		// Retrieves a message from the calling thread's queue.
-		// If 0, then message is WM_QUIT
-		// If -1, then error.
-		// Else, then message is anything other than WM_QUIT.
 		BOOL message_result = GetMessage(&message, 0, 0, 0);
 
 		if(message_result > 0)
 		{
-			TranslateMessage(&message); // Translates virtual-key messages into character messages.
-			DispatchMessage(&message);  // Sends a message to the window procedure.
+			TranslateMessage(&message);
+			DispatchMessage(&message);
 		}
-		else // if message is WM_QUIT or an error happened:
+		else
 		{
 			break;
 		}
 	}
-	
 	
 	return 0;
 }
