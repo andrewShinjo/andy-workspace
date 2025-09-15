@@ -21,6 +21,8 @@ void app_render(app_t *app)
   int current_x = rectangle.x;
   int current_y = rectangle.y;
 
+  printf("slices.left_length=%zu\n", slices.left_length);
+
   // Calculate the position of each character on the left slice.
   for(int i = 0; i < slices.left_length; i++)
   {
@@ -30,7 +32,7 @@ void app_render(app_t *app)
 
     if(current_x + char_width > rectangle.x + rectangle.width)
     {
-      current_x = 0;
+      current_x = rectangle.x;
       current_y += char_height;
     }
 
@@ -45,7 +47,7 @@ void app_render(app_t *app)
   {
     char c = *(slices.left_start + i);
     char buffer[2] = { c, '\0' };
-    platform_draw_text(buffer, x_at[i], y_at[i]);
+    platform_draw_text(buffer, x_at[i], y_at[i], width_at[i], height_at[i]);
     // platform_draw_rectangle(x_at[i], y_at[i], width_at[i], height_at[i]);
   }
 

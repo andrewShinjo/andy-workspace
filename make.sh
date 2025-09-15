@@ -37,7 +37,7 @@ mkdir -p build/demo
 
 echo "Building demo/sdl2_plaintext_editor"
 
-clang demo/plaintext_editor/sdl2_main.c \
+clang -g demo/plaintext_editor/sdl2_main.c \
   `sdl2-config --cflags --libs` \
   -lSDL2_ttf \
   -o build/demo/sdl2_plaintext_editor

@@ -54,7 +54,6 @@ int main()
 
   platform_set_renderer_handle(renderer);
 
-
   // Initialize font.
   TTF_Font *font =
     TTF_OpenFont("../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 24);
@@ -70,7 +69,7 @@ int main()
 
   gap_buffer_t gap_buffer = {};
   gap_buffer_init(&gap_buffer, 64);
-  gap_buffer_insert_text(&gap_buffer, "A", 1);
+  gap_buffer_insert_text(&gap_buffer, "Andrew Shinjo", 13);
 
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
@@ -101,7 +100,10 @@ int main()
     }
 
     // update();
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
     app_render(&app);
+    SDL_RenderPresent(renderer);
   }
 
   SDL_DestroyWindow(window);
