@@ -7,6 +7,7 @@
 #include "app.h"
 
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.c"
+#include "../../platform/sdl2_platform.c"
 #include "app.c"
 
 int main()
@@ -16,6 +17,11 @@ int main()
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
   {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+    return 1;
+  }
+  if(TTF_Init() == -1)
+  {
+    SDL_Log("Unable to initialize SDL_ttf: %s", TTF_GetError());
     return 1;
   }
 
@@ -30,11 +36,22 @@ int main()
   if(!window)
   {
     SDL_Log("Failed to create a window: %s", SDL_GetError());
+    SDL_Quit();
     return 1;
   }
 
   SDL_RaiseWindow(window);
 
+  // Initialize font.
+  font = TTF_OpenFont("../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 24);
+  if(!font)
+  {
+    SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
+    TTF_Quit();
+    SDL_Quit();
+    return 1;
+  }
+  
   // Application state
 
   gap_buffer_t gap_buffer = {};

@@ -8,6 +8,10 @@ typedef struct
 {
   gap_buffer_t *gap_buffer;
   rectangle_t rectangle;
+
+  // font info
+  int font_size;
+
 } app_t;
 
 void app_render(app_t *app);
