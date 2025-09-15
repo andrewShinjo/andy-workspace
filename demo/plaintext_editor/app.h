@@ -2,7 +2,15 @@
 #define APP_H
 
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
-#include "../../lib/draw/lib_draw.h"
+
+
+typedef struct
+{
+  int x;
+  int y;
+  int width;
+  int height;
+} rectangle_t;
 
 typedef struct 
 {

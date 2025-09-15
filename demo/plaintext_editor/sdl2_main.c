@@ -2,7 +2,6 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 
-#include "../../lib/draw/lib_draw.h"
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
 #include "app.h"
 
@@ -42,16 +41,31 @@ int main()
 
   SDL_RaiseWindow(window);
 
+  // Initialize renderer.
+  SDL_Renderer *renderer = SDL_CreateRenderer(window,
+                                              -1,
+                                              SDL_RENDERER_ACCELERATED);
+
+  if(!renderer)
+  {
+    SDL_Log("Failed to create renderer: %s\n", SDL_GetError());
+    return 1;
+  }
+
+  platform_set_renderer_handle(renderer);
+
+
   // Initialize font.
-  font = TTF_OpenFont("../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 24);
+  TTF_Font *font =
+    TTF_OpenFont("../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 24);
   if(!font)
   {
     SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
-    TTF_Quit();
-    SDL_Quit();
     return 1;
   }
-  
+
+  platform_set_font_handle(font);
+                                     
   // Application state
 
   gap_buffer_t gap_buffer = {};
