@@ -18,7 +18,6 @@ void app_render(app_t *app)
   int *width_at = malloc(text_length * sizeof(int));
   int *height_at = malloc(text_length * sizeof(int));
 
-
   int current_x = rectangle.x;
   int current_y = rectangle.y;
 
