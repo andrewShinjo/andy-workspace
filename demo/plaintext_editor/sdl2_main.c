@@ -2,11 +2,11 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 
-#include "../../lib/draw/lib_draw.h"
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
 #include "app.h"
 
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.c"
+#include "../../platform/sdl2_platform.c"
 #include "app.c"
 
 int main()
@@ -16,6 +16,11 @@ int main()
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
   {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+    return 1;
+  }
+  if(TTF_Init() == -1)
+  {
+    SDL_Log("Unable to initialize SDL_ttf: %s", TTF_GetError());
     return 1;
   }
 
@@ -30,16 +35,43 @@ int main()
   if(!window)
   {
     SDL_Log("Failed to create a window: %s", SDL_GetError());
+    SDL_Quit();
     return 1;
   }
 
   SDL_RaiseWindow(window);
 
+  // Initialize renderer.
+  SDL_Renderer *renderer = SDL_CreateRenderer(window,
+                                              -1,
+                                              SDL_RENDERER_ACCELERATED);
+
+  if(!renderer)
+  {
+    SDL_Log("Failed to create renderer: %s\n", SDL_GetError());
+    return 1;
+  }
+
+  platform_set_renderer_handle(renderer);
+
+  // Initialize font.
+  TTF_Font *font =
+    TTF_OpenFont(
+      "../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
+      24);
+  if(!font)
+  {
+    SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
+    return 1;
+  }
+
+  platform_set_font_handle(font);
+                                     
   // Application state
 
   gap_buffer_t gap_buffer = {};
   gap_buffer_init(&gap_buffer, 64);
-  gap_buffer_insert_text(&gap_buffer, "A", 1);
+  gap_buffer_insert_text(&gap_buffer, "Andrew Shinjo", 13);
 
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
@@ -70,7 +102,10 @@ int main()
     }
 
     // update();
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
     app_render(&app);
+    SDL_RenderPresent(renderer);
   }
 
   SDL_DestroyWindow(window);

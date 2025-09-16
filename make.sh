@@ -37,7 +37,7 @@ mkdir -p build/demo
 
 echo "Building demo/sdl2_plaintext_editor"
 
-clang demo/plaintext_editor/sdl2_main.c \
+clang -g demo/plaintext_editor/sdl2_main.c \
   `sdl2-config --cflags --libs` \
   -lSDL2_ttf \
   -o build/demo/sdl2_plaintext_editor
@@ -51,3 +51,8 @@ clang app/handmadehero/sdl2_main.c \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
   -o build/app/sdl2_handmadehero
+
+echo "Building gap_buffer_test."
+
+clang test/lib/data_structures/gap_buffer/gap_buffer_test.c \
+  -o build/gap_buffer_test
