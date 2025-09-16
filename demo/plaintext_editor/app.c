@@ -13,15 +13,14 @@ void app_render(app_t *app)
   gap_buffer_slice_t slices = gap_buffer_get_slices(gap_buffer);
 
   size_t text_length = gap_buffer_get_text_size(gap_buffer);
-  int *x_at = malloc(text_length);
-  int *y_at = malloc(text_length);
-  int *width_at = malloc(text_length);
-  int *height_at = malloc(text_length);
+  int *x_at = malloc(text_length * sizeof(int));
+  int *y_at = malloc(text_length * sizeof(int));
+  int *width_at = malloc(text_length * sizeof(int));
+  int *height_at = malloc(text_length * sizeof(int));
+
 
   int current_x = rectangle.x;
   int current_y = rectangle.y;
-
-  printf("slices.left_length=%zu\n", slices.left_length);
 
   // Calculate the position of each character on the left slice.
   for(int i = 0; i < slices.left_length; i++)
@@ -39,16 +38,23 @@ void app_render(app_t *app)
     x_at[i] = current_x;
     y_at[i] = current_y;
     width_at[i] = char_width;
-    height_at[i] = char_width;
+    height_at[i] = char_height;
+
+    current_x += char_width;
   }
+
 
   // Draw each character on the left slice.
   for(int i = 0; i < slices.left_length; i++)
   {
     char c = *(slices.left_start + i);
     char buffer[2] = { c, '\0' };
-    platform_draw_text(buffer, x_at[i], y_at[i], width_at[i], height_at[i]);
-    // platform_draw_rectangle(x_at[i], y_at[i], width_at[i], height_at[i]);
+    platform_draw_text(
+      buffer, 
+      x_at[i], 
+      y_at[i], 
+      width_at[i], 
+      height_at[i]);
   }
 
   // cleanup

@@ -33,15 +33,23 @@ void platform_set_renderer_handle(platform_renderer_handle renderer_handle)
 
 void platform_draw_text(char *text, int x, int y, int width, int height)
 {
-  printf("text=%c, x=%d, y=%d\n", text[0], x, y);
   SDL_Color black = { 0, 0, 0, 255 };
-  SDL_Surface *surface = TTF_RenderText_Solid(font.font_handle, text, black);
-  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer.renderer_handle, surface);
+  SDL_Surface *surface = TTF_RenderText_Solid(
+    font.font_handle, 
+    text, 
+    black);
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(
+    renderer.renderer_handle, 
+    surface);
   
   SDL_FreeSurface(surface);
 
-  SDL_Rect destination_rectangle = { 0, 0, 100, 100 };
-  SDL_RenderCopy(renderer.renderer_handle, texture, NULL, &destination_rectangle);
+  SDL_Rect destination_rectangle = { x, y, width, height };
+  SDL_RenderCopy(
+    renderer.renderer_handle, 
+    texture, 
+    NULL, 
+    &destination_rectangle);
 }
 
 int platform_get_text_height(char *text, int text_length)

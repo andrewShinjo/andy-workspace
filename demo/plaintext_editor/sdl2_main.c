@@ -56,7 +56,9 @@ int main()
 
   // Initialize font.
   TTF_Font *font =
-    TTF_OpenFont("../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 24);
+    TTF_OpenFont(
+      "../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
+      24);
   if(!font)
   {
     SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
