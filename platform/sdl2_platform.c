@@ -34,7 +34,7 @@ void platform_set_renderer_handle(platform_renderer_handle renderer_handle)
 void platform_draw_text(char *text, int x, int y, int width, int height)
 {
   SDL_Color black = { 0, 0, 0, 255 };
-  SDL_Surface *surface = TTF_RenderText_Solid(
+  SDL_Surface *surface = TTF_RenderUTF8_Blended(
     font.font_handle, 
     text, 
     black);
@@ -42,14 +42,13 @@ void platform_draw_text(char *text, int x, int y, int width, int height)
     renderer.renderer_handle, 
     surface);
   
-  SDL_FreeSurface(surface);
-
-  SDL_Rect destination_rectangle = { x, y, width, height };
+  SDL_Rect destination_rectangle = { x, y, surface->w, surface->h };
   SDL_RenderCopy(
     renderer.renderer_handle, 
     texture, 
     NULL, 
     &destination_rectangle);
+  SDL_FreeSurface(surface);
 }
 
 int platform_get_text_height(char *text, int text_length)
@@ -59,9 +58,10 @@ int platform_get_text_height(char *text, int text_length)
   return height;
 }
 
-int platform_get_text_width(char *text, int text_length)
+int platform_get_text_width(char c, int text_length)
 {
-  int width, height;
-  TTF_SizeText(font.font_handle, text, &width, &height);
-  return width;
+  int min_x, max_x, min_y, max_y, advance;
+  TTF_GlyphMetrics(font.font_handle, c, &min_x, &max_x, &min_y,
+    &max_y, &advance);
+  return advance;
 }

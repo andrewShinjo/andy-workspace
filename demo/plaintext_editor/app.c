@@ -26,7 +26,7 @@ void app_render(app_t *app)
   {
     char c = *(slices.left_start + i);
     int char_height = platform_get_text_height(&c, 1);
-    int char_width = platform_get_text_width(&c, 1);
+    int char_width = platform_get_text_width(c, 1);
 
     if(current_x + char_width > rectangle.x + rectangle.width)
     {

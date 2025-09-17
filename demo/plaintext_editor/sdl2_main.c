@@ -42,9 +42,10 @@ int main()
   SDL_RaiseWindow(window);
 
   // Initialize renderer.
-  SDL_Renderer *renderer = SDL_CreateRenderer(window,
-                                              -1,
-                                              SDL_RENDERER_ACCELERATED);
+  SDL_Renderer *renderer = SDL_CreateRenderer(
+    window,
+    -1,
+    SDL_RENDERER_ACCELERATED);
 
   if(!renderer)
   {
@@ -58,7 +59,7 @@ int main()
   TTF_Font *font =
     TTF_OpenFont(
       "../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
-      24);
+      64);
   if(!font)
   {
     SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
