@@ -43,7 +43,22 @@ void app_render(app_t *app)
   }
 
   // TODO calculate the position of each character on the right slice.
-
+  for(int i = 0; i < slices.right_length; i++)
+  {
+    char c = slices.left_start[i];
+    int char_height = platform_get_text_height(&c, 1);
+    int char_width = platform_get_text_width(c, 1);
+    if(current_x + char_width > rectangle.x + rectangle.width)
+    {
+      current_x = rectangle.x;
+      current_y += char_height;
+    }
+    x_at[slices.left_length + i] = current_x;
+    y_at[slices.left_length + i] = current_y;
+    width_at[slices.left_length + i] = char_width;
+    height_at[slices.left_length + i] = char_height;
+    current_x += char_width;
+  }
 
   // Draw each character on the left slice.
   for(int i = 0; i < slices.left_length; i++)
@@ -67,7 +82,18 @@ void app_render(app_t *app)
   );
 
   // TODO Draw each character on the right slice.
-
+  for(int i = 0; i < slices.right_length; i++)
+  {
+    char c = slices.right_start[i];
+    char buffer[2] = { c, '\0' };
+    platform_draw_text(
+      buffer,
+      x_at[slices.left_length + i],
+      y_at[slices.left_length + i],
+      width_at[slices.left_length + i],
+      height_at[slices.left_length + i]
+    );
+  }
   // cleanup
   free(x_at);
   free(y_at);

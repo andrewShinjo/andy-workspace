@@ -73,7 +73,9 @@ int main()
   gap_buffer_t gap_buffer = {};
   gap_buffer_init(&gap_buffer, 64);
   gap_buffer_insert_text(&gap_buffer, "Andrew Shinjo", 13);
+  gap_buffer_set_gap_start(&gap_buffer, 2);
 
+  printf("blah\n");
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
 

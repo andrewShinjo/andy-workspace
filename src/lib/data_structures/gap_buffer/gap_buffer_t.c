@@ -125,7 +125,7 @@ void gap_buffer_set_gap_start(gap_buffer_t *self, size_t new_gap_start)
     }
     memcpy(self->data + self->gap_end + displacement,
            self->data + self->gap_start + displacement,
-           displacement);
+           -1 * displacement);
   }
 
   self->gap_start += displacement;
