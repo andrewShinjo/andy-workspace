@@ -19,13 +19,18 @@ void platform_set_font_handle(platform_font_handle font_handle);
 
 /* Renderer */
 
-void platform_set_renderer_handle(platform_renderer_handle renderer_handle);
+void platform_set_renderer_handle(
+  platform_renderer_handle renderer_handle);
 
 /* Text */
 
 void platform_draw_text(char *text, int x, int y, int width, int height);
 int platform_get_text_height(char *text, int text_length);
 int platform_get_text_width(char c, int text_length);
+
+/* Draw */
+
+void platform_fill_rectangle(int x, int y, int width, int height);
 
 #endif
 

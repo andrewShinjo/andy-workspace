@@ -65,3 +65,17 @@ int platform_get_text_width(char c, int text_length)
     &max_y, &advance);
   return advance;
 }
+
+/* Draw */
+
+void platform_fill_rectangle(int x, int y, int width, int height)
+{
+  SDL_SetRenderDrawColor(renderer.renderer_handle, 0, 0, 0, 255);
+  SDL_Rect rect = {
+    .x = x,
+    .y = y,
+    .w = width,
+    .h = height
+  };
+  SDL_RenderFillRect(renderer.renderer_handle, &rect);
+}

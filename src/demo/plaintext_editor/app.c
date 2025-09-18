@@ -42,6 +42,8 @@ void app_render(app_t *app)
     current_x += char_width;
   }
 
+  // TODO calculate the position of each character on the right slice.
+
 
   // Draw each character on the left slice.
   for(int i = 0; i < slices.left_length; i++)
@@ -55,6 +57,16 @@ void app_render(app_t *app)
       width_at[i], 
       height_at[i]);
   }
+
+  // Draw the text cursor.
+  platform_fill_rectangle(
+    x_at[slices.left_length - 1] + width_at[slices.left_length - 1],
+    y_at[slices.left_length - 1],
+    2,
+    64
+  );
+
+  // TODO Draw each character on the right slice.
 
   // cleanup
   free(x_at);
