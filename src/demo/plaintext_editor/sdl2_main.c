@@ -75,7 +75,6 @@ int main()
   gap_buffer_insert_text(&gap_buffer, "Andrew Shinjo", 13);
   gap_buffer_set_gap_start(&gap_buffer, 2);
 
-  printf("blah\n");
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
 
@@ -94,17 +93,31 @@ int main()
   SDL_Event event;
   int running = 1;
 
+  SDL_StartTextInput();
+
   while(running)
   {
     while(SDL_PollEvent(&event))
     {
-      if(event.type == SDL_QUIT)
+      switch(event.type)
       {
-        running = 0;
+        case(SDL_TEXTINPUT):
+        {
+          printf("%s\n", event.text.text); 
+          break;
+        }
+        case(SDL_QUIT):
+        {
+          running = 0;
+          break;
+        }
+        default:
+        {
+          break;
+        }
       }
     }
 
-    // update();
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     app_render(&app);

@@ -42,7 +42,6 @@ void app_render(app_t *app)
     current_x += char_width;
   }
 
-  // TODO calculate the position of each character on the right slice.
   for(int i = 0; i < slices.right_length; i++)
   {
     char c = slices.left_start[i];
@@ -81,7 +80,6 @@ void app_render(app_t *app)
     64
   );
 
-  // TODO Draw each character on the right slice.
   for(int i = 0; i < slices.right_length; i++)
   {
     char c = slices.right_start[i];
@@ -94,6 +92,7 @@ void app_render(app_t *app)
       height_at[slices.left_length + i]
     );
   }
+
   // cleanup
   free(x_at);
   free(y_at);
