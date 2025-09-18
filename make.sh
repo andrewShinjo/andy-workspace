@@ -33,22 +33,18 @@ if [ ! -d thirdparty/SDL2_ttf/build ]; then
   )
 fi
 
-mkdir -p build/demo
-
 echo "Building demo/sdl2_plaintext_editor"
 
-clang -g demo/plaintext_editor/sdl2_main.c \
+clang -g src/demo/plaintext_editor/sdl2_main.c \
   `sdl2-config --cflags --libs` \
   -lSDL2_ttf \
-  -o build/demo/sdl2_plaintext_editor
-
-mkdir -p build/app
+  -o build/sdl2_plaintext_editor
 
 echo "Building app/handmadehero."
 
-clang app/handmadehero/sdl2_main.c \
+clang src/app/handmadehero/sdl2_main.c \
   -Ithirdparty/SDL2/include \
   -Lthirdparty/SDL2/build \
   -lSDL2 \
-  -o build/app/sdl2_handmadehero
+  -o build/sdl2_handmadehero
 

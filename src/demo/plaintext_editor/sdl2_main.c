@@ -58,7 +58,7 @@ int main()
   // Initialize font.
   TTF_Font *font =
     TTF_OpenFont(
-      "../../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
+      "../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
       64);
   if(!font)
   {
