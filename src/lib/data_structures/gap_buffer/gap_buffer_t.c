@@ -41,7 +41,7 @@ gap_buffer_slice_t gap_buffer_get_slices(gap_buffer_t *self)
   return result;
 }
 
-size_t gap_buffer_get_text_size(gap_buffer_t *self)
+size_t gap_buffer_get_text_length(gap_buffer_t *self)
 {
   size_t left_length = self->gap_start;
   size_t right_length = self->capacity - self->gap_end;

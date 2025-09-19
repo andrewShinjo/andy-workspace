@@ -3,7 +3,6 @@
 
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
 
-
 typedef struct
 {
   int x;
@@ -20,8 +19,11 @@ typedef struct
   // font info
   int font_size;
 
+  // key event info
+  char *event_text;
+
 } app_t;
 
-void app_render(app_t *app);
+void app_update_and_render(app_t *app);
 
 #endif

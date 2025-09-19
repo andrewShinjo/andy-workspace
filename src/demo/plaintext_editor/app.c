@@ -1,18 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
 #include "../../platform/platform.h"
 #include "app.h"
 
 #define private_function static
 
-void app_render(app_t *app)
+void app_update_and_render(app_t *app)
 {
   gap_buffer_t *gap_buffer = app->gap_buffer;
   rectangle_t rectangle = app->rectangle;
   gap_buffer_slice_t slices = gap_buffer_get_slices(gap_buffer);
+  char *event_text = app->event_text;
 
-  size_t text_length = gap_buffer_get_text_size(gap_buffer);
+  // Update gap_buffer.
+  if(app->event_text[0] != '\0')
+  {
+    gap_buffer_insert_text(
+      gap_buffer,
+      app->event_text,
+      strlen(app->event_text)
+    );
+  }
+
+  size_t text_length = gap_buffer_get_text_length(gap_buffer);
   int *x_at = malloc(text_length * sizeof(int));
   int *y_at = malloc(text_length * sizeof(int));
   int *width_at = malloc(text_length * sizeof(int));
@@ -98,4 +111,5 @@ void app_render(app_t *app)
   free(y_at);
   free(width_at);
   free(height_at);
+  app->event_text[0] = '\0';
 }

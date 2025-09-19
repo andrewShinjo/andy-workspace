@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../../lib/data_structures/gap_buffer/gap_buffer_t.h"
 #include "app.h"
@@ -60,6 +62,7 @@ int main()
     TTF_OpenFont(
       "../assets/Inconsolata/static/Inconsolata-Regular.ttf", 
       64);
+
   if(!font)
   {
     SDL_Log("TTF_OpenFont error: %s", TTF_GetError());
@@ -85,9 +88,13 @@ int main()
     .height = height
   };
 
+  char event_text[32];
+  event_text[0] = '\0';
+
   app_t app = {
     .gap_buffer = &gap_buffer,
-    .rectangle = rectangle
+    .rectangle = rectangle,
+    .event_text = event_text
   };
 
   SDL_Event event;
@@ -103,7 +110,7 @@ int main()
       {
         case(SDL_TEXTINPUT):
         {
-          printf("%s\n", event.text.text); 
+          strcpy(app.event_text, event.text.text);
           break;
         }
         case(SDL_QUIT):
@@ -120,7 +127,7 @@ int main()
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    app_render(&app);
+    app_update_and_render(&app);
     SDL_RenderPresent(renderer);
   }
 

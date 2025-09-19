@@ -31,7 +31,7 @@ void gap_buffer_delete_text(gap_buffer_t *self, size_t count);
 
 gap_buffer_slice_t gap_buffer_get_slices(gap_buffer_t *self);
 
-size_t gap_buffer_get_text_size(gap_buffer_t *self);
+size_t gap_buffer_get_text_length(gap_buffer_t *self);
 
 void gap_buffer_insert_text(gap_buffer_t *self, 
                             char *text, 
